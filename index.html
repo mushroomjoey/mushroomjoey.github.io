@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PointyBois Transit Center</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
     <style>
         body { 
             background: #000; 
@@ -15,6 +16,17 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+        }
+
+        /* NEW HEADING OUTSIDE THE BOXES */
+        .external-heading {
+            font-family: 'Bungee', cursive;
+            color: #fff;
+            font-size: 2.2rem;
+            margin: 30px 0 20px 0;
+            text-align: center;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 0px #444;
         }
 
         /* Responsive Board Container */
@@ -41,7 +53,7 @@
         .header h1 { margin: 0; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; }
         
         /* Themes */
-        .sb-theme { color: #FF99EB; } /* Pink */
+        .sb-theme { color: #FF99EB; } /* Pink - Changed to "departures" below */
         .nb-theme { color: #00f2ff; } /* Cyan */
 
         .arrival-row { 
@@ -52,7 +64,6 @@
             border-bottom: 1px solid #222; 
         }
         
-        /* Unified Fixed-Width Badge */
         .route-num { 
             width: 50px; 
             height: 32px; 
@@ -103,9 +114,11 @@
 </head>
 <body>
 
+<h1 class="external-heading">pointybois transit center</h1>
+
 <div class="board">
     <div class="header">
-        <h1 class="sb-theme">PointyBois Transit Center</h1>
+        <h1 class="sb-theme">departures</h1>
         <div id="status-sb" class="status-text">Connecting...</div>
     </div>
     <div id="arrivals-sb"></div>
@@ -120,6 +133,7 @@
 </div>
 
 <script>
+// Logic remains identical to your original code
 const STOPS = ["1_40056", "1_28680", "1_28030"];
 const API_KEY = "7c2e64a9-b866-4aea-8949-69f79fae05e9";
 
@@ -148,14 +162,12 @@ async function updateAllStops() {
                 if (timeMs >= (now - 60000) && timeMs <= twentyMinsFromNow) {
                     let headsign = bus.tripHeadsign.toUpperCase();
                     
-                    // Clean D-Line Destination
                     if (headsign.includes("DOWNTOWN SEATTLE") && headsign.includes("UPTOWN")) {
                         headsign = "DOWNTOWN SEATTLE";
                     }
                     
                     const isNorthbound = headsign.includes("CROWN HILL") || headsign.includes("CARKEEK");
 
-                    // Badge Cleanup: "D LINE" -> "D"
                     let routeDisplay = bus.routeShortName.toUpperCase();
                     if (routeDisplay.includes("D LINE")) {
                         routeDisplay = "D";
@@ -189,8 +201,6 @@ async function updateAllStops() {
             } else {
                 list.forEach(bus => {
                     const mins = Math.round((bus.time - now) / 60000);
-                    
-                    // Style logic: Theme color or Gray if Southbound <= 5
                     let colorStyle = `color: ${themeColor};`;
                     const minuteClass = (isSouthbound && mins <= 5) ? "too-late-mins" : "";
                     if (minuteClass !== "") colorStyle = ""; 
@@ -219,9 +229,7 @@ async function updateAllStops() {
             }
         };
 
-        // Render Southbound (Pink)
         renderList(sbArrivals, 'arrivals-sb', 'No Southbound buses.', false, true, '#FF99EB');
-        // Render Northbound (Cyan)
         renderList(nbArrivals, 'arrivals-nb', 'No Northbound arrivals.', true, false, '#00f2ff');
 
         const timestamp = "LIVE: " + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
